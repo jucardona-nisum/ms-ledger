@@ -1,0 +1,26 @@
+sourceSets {
+    acceptanceTest {
+        java {
+            compileClasspath += main.output + test.output
+            runtimeClasspath += main.output + test.output
+            srcDir file('src/acceptance-test/java')
+        }
+        resources.srcDir file('src/acceptance-test/resources')
+    }
+}
+
+//configurations {
+//    cucumberRuntime {
+//        extendsFrom testImplementation
+//    }
+//}
+
+task acceptanceTest(type: Test) {
+    testClassesDir = sourceSets.acceptanceTest.output.classesDir
+    classpath = sourceSets.acceptanceTest.runtimeClasspath
+    options {
+        final String ambiente = "src/acceptance-test/resources/" + System.getenv("ENV")
+        jvmArgs = ['-Dcucumber.options= --plugin pretty --tags ~@ignore --glue acceptance.steps ' + ambiente]
+    }
+    testLogging.showStandardStreams = true
+}
